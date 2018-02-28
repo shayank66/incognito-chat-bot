@@ -1,14 +1,21 @@
 var Sequelize = require('sequelize');
 var dotenv = require('dotenv');
-dotenv.loa
-var seq = new Sequelize('chatkonim', 'root', '123456', {
-    host: 'localhost',
+dotenv.load();
+var seq = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+    host: process.env.DB_HOST,
     dialect: 'mysql',
     pool: {
         min: 0,
         max: 5,
         acquire: 30000,
         idle: 10000
+    },
+    define: {
+        charset: 'utf8mb4',
+        dialectOptions: {
+            collate: 'utf8mb4_general_ci'
+        },
+        timestamps: true
     }
 });
 var Target = seq.define('targets', {
@@ -19,23 +26,19 @@ var Target = seq.define('targets', {
     },
     tid: Sequelize.INTEGER.UNSIGNED,
     username: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
     },
-    first_name: Sequelize.STRING,
+    first_name: {type: Sequelize.STRING, allowNull: false},
     last_name: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,
     latitude: {
-        type: Sequelize.FLOAT(12, 18),
-        allowNull: true
+        type: Sequelize.FLOAT(18, 12)
     },
     longitude: {
-        type: Sequelize.FLOAT(12, 18),
-        allowNull: true
+        type: Sequelize.FLOAT(18, 12)
     },
     is_connected: {
         type: Sequelize.BOOLEAN,
@@ -44,24 +47,25 @@ var Target = seq.define('targets', {
     connected_to: {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: true
-    },
+    }
+}, {
     indexes: [
         {
             name: 'is_conncted_index',
             method: 'BTREE',
-            fields: ['is_connected', {attribute: 'is_connected', collate: 'en_US', order: 'DESC'}]
+            fields: ['is_connected']
         },
         {
             name: 'tid_index',
             method: 'BTREE',
-            fields: ['tid', {attribute: 'tid', collate: 'en_US', order: 'DESC'}]
+            fields: ['tid']
         }
     ]
 });
 var Message = seq.define('messages', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
-        priamryKey: true,
+        primaryKey: true,
         autoIncrement: true
     },
     from_target: Sequelize.BIGINT.UNSIGNED,
@@ -69,7 +73,7 @@ var Message = seq.define('messages', {
     message: Sequelize.TEXT,
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE
-})
+});
 
 seq.sync().then(function () {
     console.log("bot >> database >> synced successfully");
@@ -77,4 +81,4 @@ seq.sync().then(function () {
     console.log("bot >> database >> there is an error : ", err);
 });
 
-module.exports = {connection: seq, Target: Target, Message: Message}
+module.exports = {connection: seq, Target: Target, Message: Message};
