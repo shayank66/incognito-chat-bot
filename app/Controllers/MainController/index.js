@@ -1,8 +1,8 @@
-var db = require('../../../config/database').connection;
-var Target = require('../../../config/database').Target;
-var express = require('express');
-var router = express.Router();
+/*
+ * Const db = require('../../../config/database').connection
+ * const Target = require('../../../config/database').Target
+ */
+const express = require('express')
+const router = express.Router()
 
-module.exports = router;
-
-
+module.exports = router
