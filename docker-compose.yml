@@ -4,5 +4,13 @@ services:
   web :
   app :
   mysql :
+    image: mysql:5.7
   redis :
+    container_name: fv-bot-redis-container
   mongo :
+    image : mongo:3.6
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=1
+      - MONGO_INITDB_ROOT_PASSWORD=2
+    container_name: fv-bot-mongo-container
